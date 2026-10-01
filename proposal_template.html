@@ -35,7 +35,7 @@
         margin-bottom: 3px;
     }
     h1 {
-        font-size: 14pt;
+        font-size: 13.5pt;
         color: #1e3a8a;
         margin: 2px 0 5px 0;
         line-height: 1.25;
@@ -159,7 +159,7 @@
             <strong>Target Degree:</strong> Master of Science (MS) in Computer Science
         </div>
         <div class="meta-item">
-            <strong>Prospective Supervisor:</strong> Prof. Huanhuan Chen (IEEE Fellow)<br>
+            <strong>Prospective Supervisor:</strong> Prof. Shuangwu Chen (Associate Professor)<br>
             <strong>Host Institution:</strong> School of Computer Science & Technology, USTC<br>
             <strong>Target Funding:</strong> CAS-ANSO Scholarship for Young Talents
         </div>
@@ -168,7 +168,7 @@
 
 <div class="abstract-box">
     <div class="abstract-title">Executive Abstract</div>
-    Natural Language Interfaces to Databases (NLIDB) translate conversational user questions into executable SQL queries. However, enterprise databases with dozens to hundreds of interconnected tables pose severe schema-linking bottlenecks for Large Language Models (LLMs). Conventional Retrieval-Augmented Generation (RAG) models schemas as independent text blocks, retrieving tables through semantic vector similarity. Over multi-table relational structures, vector retrieval frequently retrieves terminal tables while omitting essential intermediate junction tables, triggering invalid joins, column hallucinations, and execution failures. This proposal presents <strong>Relational Graph-RAG</strong>, a framework that models database metadata as a directed relational knowledge graph. By executing structural path traversals across foreign-key dependencies, the system isolates the minimal connected subgraph required to bridge user entities, supplying LLMs with structurally sound, hallucination-resistant context. Evaluated against direct prompting and vector-RAG baselines on public benchmarks (Spider, BIRD), this research investigates the trade-offs between execution accuracy, token efficiency, and schema scalability.
+    Natural Language Interfaces to Databases (NLIDB) translate conversational user questions into executable SQL queries. Building upon recent breakthroughs in table reasoning such as <strong>SQLForge (ACL 2025)</strong>, <strong>Table Pruning in TableQA (ACL 2026 Oral)</strong>, and <strong>SpecCache for RAG Serving (ACL 2026 Oral)</strong> from Prof. Shuangwu Chen's laboratory, enterprise databases with dozens to hundreds of interconnected tables pose severe schema-linking and foreign-key join bottlenecks. Conventional Retrieval-Augmented Generation (RAG) models schemas as independent text blocks, retrieving tables through semantic vector similarity. Over multi-table relational structures, vector retrieval frequently retrieves terminal tables while omitting essential intermediate junction tables, triggering invalid joins, column hallucinations, and execution failures. This proposal presents <strong>Relational Graph-RAG</strong>, a framework that models database metadata as a directed relational knowledge graph. By executing structural path traversals across foreign-key dependencies, the system isolates the minimal connected subgraph required to bridge user entities, supplying LLMs with structurally sound, hallucination-resistant context. Evaluated against direct prompting and vector-RAG baselines on public benchmarks (Spider, BIRD), this research investigates the trade-offs between execution accuracy, token efficiency, and schema scalability.
 </div>
 
 <h2>1. Introduction & The Core Problem</h2>
@@ -181,7 +181,7 @@ Standard Large Language Models encounter severe degradation on such queries. If 
 
 <h2>2. Relational Graph-RAG System Architecture</h2>
 <p>
-Rather than treating schemas as collections of unstructured text documents, <strong>Relational Graph-RAG</strong> formalizes the database as a directed relational knowledge graph G = (V, E). Vertices V represent tables and attribute columns; directed edges E represent primary-foreign key relationships, constraints, and cardinalities.
+Extending the table reasoning and pruning foundations established in <strong>SQLForge (ACL 2025)</strong> and <strong>Table Pruning in TableQA (ACL 2026 Oral)</strong>, <strong>Relational Graph-RAG</strong> formalizes the database as a directed relational knowledge graph G = (V, E). Vertices V represent tables and attribute columns; directed edges E represent primary-foreign key relationships, constraints, and cardinalities.
 </p>
 
 <div class="diagram-container">
@@ -195,7 +195,7 @@ The system executes a four-stage query lifecycle:
 <ol>
     <li><strong>Automated Schema Mining:</strong> An automated ingestion daemon queries PostgreSQL/MySQL metadata (<code>information_schema.tables</code>, <code>columns</code>, <code>key_column_usage</code>) to dynamically construct the relational graph without manual tagging.</li>
     <li><strong>Multi-Hop Path Traversal:</strong> An entity extractor maps natural language query concepts to graph nodes. A shortest-path graph search (evaluating Dijkstra and Steiner tree algorithms) identifies the minimal connected join subgraph connecting all target entities.</li>
-    <li><strong>Sub-Millisecond Redis Caching:</strong> Frequently accessed schema paths (e.g., <code>orders &rarr; payments &rarr; users</code>) are cached in Redis to eliminate redundant graph traversal latencies during peak analytical loads.</li>
+    <li><strong>Sub-Millisecond Redis & Speculative Caching:</strong> Frequently accessed schema paths (e.g., <code>orders &rarr; payments &rarr; users</code>) are cached in Redis to eliminate redundant graph traversal latencies, interfacing seamlessly with speculative KV-cache reuse techniques (SpecCache).</li>
     <li><strong>Closed-Loop SQL AST Validation:</strong> Candidate SQL emitted by the LLM is parsed using an Abstract Syntax Tree (AST) validator (<code>sqlglot</code>) before database execution. If an invalid column or unconstrained join is detected, structured diagnostic feedback is fed back to the model for zero-shot self-correction.</li>
 </ol>
 
@@ -324,7 +324,7 @@ The evaluation will measure six precise quantitative metrics:
 <strong>Preparation & Practical Systems Readiness:</strong> I hold a Bachelor of Science in Computer Science from the University of Engineering and Technology (UET), Peshawar, Pakistan. Over the past 4+ years, I have worked professionally as a backend and full-stack software engineer architecting production databases (PostgreSQL, MySQL), distributed caching layers (Redis), and containerized microservices (Docker). While I do not possess prior academic publications, my daily experience designing relational schemas, writing complex multi-table joins, and debugging database bottlenecks provides immediate practical readiness to construct database extractors and experimental testbeds from Day 1. I am committed to dedicating Year 1 coursework to mastering theoretical machine learning and empirical research methodologies.
 </p>
 <p>
-<strong>Alignment with Prof. Huanhuan Chen's Group:</strong> Prof. Huanhuan Chen's distinguished scholarship in Machine Learning, Data Mining, and Big Knowledge Engineering at USTC provides the ideal scientific foundation for this investigation. Framing relational schemas as structured knowledge graphs directly operationalizes knowledge engineering principles. Under Prof. Chen's mentorship, I aim to bridge applied database engineering with rigorous knowledge representation research.
+<strong>Direct Alignment with Prof. Shuangwu Chen's Group:</strong> Prof. Shuangwu Chen's laboratory at USTC is a recognized leader in table intelligence and efficient RAG serving, evidenced by recent groundbreaking publications including <em>SQLForge</em> (ACL 2025 Findings), <em>Table Pruning in TableQA</em> (ACL 2026 Oral), <em>Dual Denoising for Large-Scale Tables</em> (ACL 2026), and <em>SpecCache for RAG Serving</em> (ACL 2026 Oral). My proposed research on graph-guided multi-table join discovery extends his team's table pruning and reasoning paradigms from flat tables into deeply normalized relational enterprise schemas. Under Prof. Chen's supervision, I aim to combine applied database systems engineering with rigorous table reasoning research.
 </p>
 
 <h2>7. Key Research Questions & Anticipated Contributions</h2>
@@ -332,7 +332,7 @@ The evaluation will measure six precise quantitative metrics:
 The thesis will formally answer three primary research questions:
 </p>
 <ul>
-    <li><strong>RQ1:</strong> Does relational-graph-aware schema retrieval significantly improve Execution Accuracy (EX) over multi-table queries compared to standard vector retrieval baselines?</li>
+    <li><strong>RQ1:</strong> Does relational-graph-aware schema retrieval significantly improve Execution Accuracy (EX) over multi-table queries compared to standard vector retrieval baselines on Spider and BIRD benchmarks?</li>
     <li><strong>RQ2:</strong> By what factor does subgraph context pruning reduce token consumption and generation latency across varying schema sizes?</li>
     <li><strong>RQ3:</strong> How effectively does an AST-guided verification loop detect and self-repair relational join errors prior to database execution?</li>
 </ul>
@@ -342,11 +342,11 @@ The thesis will formally answer three primary research questions:
 
 <h2>8. Selected Foundational References</h2>
 <ul style="font-size: 7.5pt; color: #475569; line-height: 1.35;">
-    <li>[1] Yu, T., et al. "Spider: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and Text-to-SQL." <em>EMNLP 2018</em>.</li>
-    <li>[2] Li, J., et al. "Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQL (BIRD)." <em>NeurIPS 2023</em>.</li>
-    <li>[3] Gao, D., et al. "Text-to-SQL Empowered by Large Language Models: A Benchmark Evaluation." <em>VLDB 2024</em>.</li>
-    <li>[4] Pourreza, M., & Rafiei, D. "DIN-SQL: Decomposed In-Context Learning of Text-to-SQL with Self-Correction." <em>NeurIPS 2023</em>.</li>
-    <li>[5] Chen, H., et al. "Knowledge graph quality control: A survey." <em>IEEE Transactions on Knowledge and Data Engineering</em>.</li>
+    <li>[1] Guo, Y., Chen, S.*, et al. "SQLForge: Synthesizing Reliable and Diverse Data to Enhance Text-to-SQL Reasoning in LLMs." <em>Findings of ACL 2025</em>.</li>
+    <li>[2] Guo, Y., Ye, S., Chen, S., Yang, J. "Rethinking Table Pruning in TableQA: From Sequential Revisions to Gold Trajectory-Supervised Parallel Search." <em>ACL 2026 (Oral)</em>.</li>
+    <li>[3] Ye, S., Guo, Y., Chen, S., Yang, J. "When TableQA Meets Noise: A Dual Denoising Framework for Complex Questions and Large-scale Tables." <em>ACL 2026</em>.</li>
+    <li>[4] Wen, Z., Zhang, T., Chen, S., Yang, J. "SpecCache: Speculative KV Cache Reuse for Efficient RAG Serving." <em>ACL 2026 (Oral)</em>.</li>
+    <li>[5] Li, J., et al. "Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQL (BIRD)." <em>NeurIPS 2023</em>.</li>
 </ul>
 
 <div class="footer">
